@@ -707,6 +707,8 @@ struct msm_drm_private {
 	struct pm_qos_request pm_irq_req;
 	struct delayed_work pm_unreq_dwork;
 	atomic_t pm_req_set;
+
+	struct msm_idle idle;
 };
 
 /* get struct msm_kms * from drm_device * */
