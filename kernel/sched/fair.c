@@ -7493,7 +7493,8 @@ enum fastpaths {
 
 static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 				   bool prefer_idle,
-				   struct find_best_target_env *fbt_env)
+				   struct find_best_target_env *fbt_env,
+				   bool prefer_high_cap)
 {
 	unsigned long min_util = boosted_task_util(p);
 	unsigned long target_capacity = ULONG_MAX;
@@ -7523,15 +7524,16 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 	 * energy efficient CPU candidate, thus requiring to minimise
 	 * target_capacity. For these cases target_capacity is already
 	 * initialized to ULONG_MAX.
-	 * However, for prefer_idle and boosted tasks we look for a high
+	 * However, for prefer_idle and prefer_high_cap tasks we look for a high
 	 * performance CPU, thus requiring to maximise target_capacity. In this
 	 * case we initialise target_capacity to 0.
 	 */
-	if (prefer_idle && boosted)
+	if (prefer_idle && prefer_high_cap)
 		target_capacity = 0;
 
 	/* Find start CPU based on boost value */
 	start_cpu = fbt_env->start_cpu;
+
 	/* Find SD for the start CPU */
 	sd = rcu_dereference(per_cpu(sd_ea, start_cpu));
 	if (!sd)
@@ -7666,7 +7668,6 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 			 * tasks.
 			 */
 			if (prefer_idle) {
-
 				/*
 				 * Case A.1: IDLE CPU
 				 * Return the best IDLE CPU we find:
@@ -7676,10 +7677,10 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 				 * efficient CPU (i.e. smallest capacity_orig)
 				 */
 				if (idle_cpu(i)) {
-					if (boosted &&
+					if (prefer_high_cap &&
 					    capacity_orig < target_capacity)
 						continue;
-					if (!boosted &&
+					if (!prefer_high_cap &&
 					    capacity_orig > target_capacity)
 						continue;
 					if (capacity_orig == target_capacity &&
@@ -7844,7 +7845,7 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 		 * next cluster if they are higher in capacity. If we are
 		 * not in any kind of boost, we break.
 		 */
-		if (!prefer_idle && !boosted &&
+		if (!prefer_idle && !prefer_high_cap &&
 			(target_cpu != -1 || best_idle_cpu != -1) &&
 			(fbt_env->placement_boost == SCHED_BOOST_NONE ||
 			sched_boost() != FULL_THROTTLE_BOOST ||
@@ -7854,14 +7855,14 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 
 		/*
 		 * if we are in prefer_idle and have found an idle cpu,
-		 * break from searching more groups based on the stune.boost and
-		 * group cpu capacity. For !prefer_idle && boosted case, don't
+		 * break from searching more groups based on the stune.prefer_high_cap and
+		 * group cpu capacity. For !prefer_idle && prefer_high_cap case, don't
 		 * iterate lower capacity CPUs unless the task can't be
 		 * accommodated in the higher capacity CPUs.
 		 */
 		if ((prefer_idle && best_idle_cpu != -1) ||
-		    (boosted && (best_idle_cpu != -1 || target_cpu != -1))) {
-			if (boosted) {
+		    (prefer_high_cap && (best_idle_cpu != -1 || target_cpu != -1))) {
+			if (prefer_high_cap) {
 				if (!next_group_higher_cap)
 					break;
 			} else {
@@ -7874,7 +7875,7 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 
 	adjust_cpus_for_packing(p, &target_cpu, &best_idle_cpu,
 				best_idle_cstate,
-				fbt_env, boosted);
+				fbt_env, prefer_high_cap);
 
 	/*
 	 * For non latency sensitive tasks, cases B and C in the previous loop,
@@ -7896,14 +7897,6 @@ static inline int find_best_target(struct task_struct *p, int *backup_cpu,
 	 *   a) ACTIVE CPU: target_cpu
 	 *   b) IDLE CPU: best_idle_cpu
 	 */
-
-	if (prefer_idle && (best_idle_cpu != -1)) {
-		trace_sched_find_best_target(p, prefer_idle, min_util, start_cpu,
-					     best_idle_cpu, best_active_cpu,
-					     -1, best_idle_cpu, -1);
-
-		return best_idle_cpu;
-	}
 
 	if (target_cpu == -1)
 		target_cpu = prefer_idle
@@ -8164,7 +8157,10 @@ static int find_energy_efficient_cpu(struct sched_domain *sd,
 #ifdef CONFIG_SCHED_TUNE
 	bool prefer_high_cap = schedtune_prefer_high_cap(p);
 	int boosted = (schedtune_task_boost(p) > 0 || per_task_boost(p) > 0);
-	int start_cpu = get_start_cpu(p);
+
+        bool prefer_high_cap = schedtune_prefer_high_cap(p);
+
+        int start_cpu = get_start_cpu(p);
 
 	if (start_cpu < 0)
 		return -1;
@@ -8174,6 +8170,9 @@ static int find_energy_efficient_cpu(struct sched_domain *sd,
 
 #elif  CONFIG_UCLAMP_TASK
 	int boosted = (uclamp_boosted(p) > 0 || per_task_boost(p) > 0);
+
+        bool prefer_high_cap = schedtune_prefer_high_cap(p);
+
         int start_cpu = get_start_cpu(p);
 
         if (start_cpu < 0)
@@ -8267,7 +8266,7 @@ static int find_energy_efficient_cpu(struct sched_domain *sd,
 
 		/* Find a cpu with sufficient capacity */
 		target_cpu = find_best_target(p, &eenv->cpu[EAS_CPU_BKP].cpu_id,
-					      prefer_idle, &fbt_env);
+					      prefer_idle, &fbt_env, prefer_high_cap);
 		if (target_cpu < 0)
 			goto out;
 
@@ -8279,7 +8278,7 @@ static int find_energy_efficient_cpu(struct sched_domain *sd,
 		if (p->state == TASK_WAKING)
 			delta = task_util(p);
 #endif
-		if (task_placement_boost_enabled(p) || fbt_env.need_idle || boosted ||
+		if (task_placement_boost_enabled(p) || fbt_env.need_idle || prefer_high_cap ||
 		    is_rtg || __cpu_overutilized(prev_cpu, delta) ||
 		    !task_fits_max(p, prev_cpu) || cpu_isolated(prev_cpu))
 			goto out;
