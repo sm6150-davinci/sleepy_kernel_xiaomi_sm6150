@@ -78,6 +78,7 @@
 #include "internal.h"
 
 atomic_long_t kshrinkd_waiters = ATOMIC_LONG_INIT(0);
+atomic_long_t kswapd_waiters = ATOMIC_LONG_INIT(0);
 
 /* prevent >1 _updater_ of zone percpu pageset ->high and ->batch fields */
 static DEFINE_MUTEX(pcp_batch_high_lock);
@@ -4205,7 +4206,6 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
 	unsigned int zonelist_iter_cookie;
 	int reserve_flags;
 	bool woke_kshrinkd = false;
-	pg_data_t *pgdat = ac->preferred_zoneref->zone->zone_pgdat;
 	bool woke_kswapd = false;
 
 	/*
@@ -4247,7 +4247,7 @@ restart:
 			woke_kshrinkd = true;
 		}
 		if (!woke_kswapd) {
-			atomic_inc(&pgdat->kswapd_waiters);
+			atomic_long_inc(&kswapd_waiters);
 			woke_kswapd = true;
 		}
 		wake_all_kswapds(order, ac);
@@ -4497,7 +4497,7 @@ got_pg:
 	if (woke_kshrinkd)
 		atomic_long_dec(&kshrinkd_waiters);
 	if (woke_kswapd)
-		atomic_dec(&pgdat->kswapd_waiters);
+		atomic_long_dec(&kswapd_waiters);
 	if (!page)
 		warn_alloc(gfp_mask, ac->nodemask,
 				"page allocation failure: order:%u", order);
@@ -6497,7 +6497,6 @@ static void __paginginit free_area_init_core(struct pglist_data *pgdat)
 	pgdat_page_ext_init(pgdat);
 	spin_lock_init(&pgdat->lru_lock);
 	lruvec_init(node_lruvec(pgdat));
-	pgdat->kswapd_waiters = (atomic_t)ATOMIC_INIT(0);
 
 	pgdat->per_cpu_nodestats = &boot_nodestats;
 
