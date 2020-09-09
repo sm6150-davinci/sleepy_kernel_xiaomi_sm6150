@@ -311,6 +311,22 @@ static int dsi_bridge_get_panel_info(struct drm_bridge *bridge, char *buf)
 	return rc;
 }
 
+static int dsi_bridge_get_panel_info(struct drm_bridge *bridge, char *buf)
+{
+	int rc = 0;
+	struct dsi_bridge *c_bridge = to_dsi_bridge(bridge);
+
+	if (!c_bridge) {
+		pr_err("Invalid params\n");
+		return rc;
+	}
+
+	if (c_bridge->display->name)
+		return snprintf(buf, PAGE_SIZE, c_bridge->display->name);
+
+	return rc;
+}
+
 static void dsi_bridge_enable(struct drm_bridge *bridge)
 {
 	int rc = 0;
