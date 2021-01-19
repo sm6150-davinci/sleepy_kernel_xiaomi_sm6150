@@ -102,6 +102,9 @@ KBUILD_CFLAGS	+= -mno-implicit-float
 else
 KBUILD_CFLAGS	+= -mgeneral-regs-only
 endif
+ifeq ($(CONFIG_ARCH_SM6150), y)
+KBUILD_CFLAGS  += -mcpu=cortex-a76.cortex-a55
+endif
 KBUILD_CFLAGS	+= $(lseinstr) $(brokengasinst) $(vdso32)
 KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
 KBUILD_CFLAGS	+= -fno-pic
