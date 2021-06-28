@@ -140,6 +140,8 @@ static int one_thousand = 1000;
 /*dylanchang, 2019/4/30, add foreground task io opt*/
 unsigned int sysctl_fg_io_opt = 1;
 
+static int max_swappiness = 170;
+
 #ifdef CONFIG_PRINTK
 static int ten_thousand = 10000;
 #endif
@@ -1713,7 +1715,7 @@ static struct ctl_table vm_table[] = {
 		.mode		= 0644,
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1		= &zero,
-		.extra2		= &one_hundred,
+		.extra2		= &max_swappiness,
 	},
 	{
 		.procname       = "want_old_faultaround_pte",
