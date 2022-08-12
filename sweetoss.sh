@@ -117,7 +117,7 @@ elif [ "$TOOLCHAIN" == clang ]; then
 	if [ ! -d "$HOME/clang" ]
 	then
 		echo -e "$green << cloning clang >> \n $white"
-		git clone --depth=1 https://gitlab.com/Panchajanya1999/azure-clang.git "$HOME"/clang
+		git clone --depth=1 https://github.com/kdrag0n/proton-clang.git "$HOME"/clang
 	fi
 	export PATH="$HOME/clang/bin:$PATH"
 	export KBUILD_COMPILER_STRING=$("$HOME"/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
@@ -153,7 +153,9 @@ End=$(date +"%s")
 Diff=$(($End - $Start))
 }
 
-export IMG="$MY_DIR"/out/arch/arm64/boot/Image.gz
+export IMG="$MY_DIR"/out/arch/arm64/boot/Image
+export dtbo="$MY_DIR"/out/arch/arm64/boot/dtbo.img
+export dtb="$MY_DIR"/out/arch/arm64/boot/dtb.img
 
 # Let's start
 
@@ -196,8 +198,10 @@ KERVER=$(make kernelversion)
                 git clone "$AnyKernel" --single-branch -b "$AnyKernelbranch" zip
                 echo -e "$yellow << making kernel zip >> \n $white"
                 cp -r "$IMG" zip/
+                cp -r "$dtbo" zip/
+                cp -r "$dtb" zip/
                 cd zip
-                mv Image.gz zImage
+                mv Image zImage
                 export ZIP="$KERNEL_NAME"-"$KRNL_REL_TAG"-"$CODENAME"-"$DATE"
                 zip -r9 "$ZIP" * -x .git README.md LICENSE *placeholder
                 curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/shashank1439/anykernel/zipper/zipsigner-3.0.jar
