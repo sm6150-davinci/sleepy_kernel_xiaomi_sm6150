@@ -52,9 +52,9 @@ if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
 
 export CHATID API_BOT KERNEL_VERSION
 
-DEVICE="Redmi note 10 pro"
-CODENAME="sweet"
-KERNEL_NAME="SleepyKernel"
+DEVICE="REDMI NOTE 10 PRO & PRO MAX"
+CODENAME="SWEET"
+KERNEL_NAME="SLEEPY_KERNEL"
 
 # Kernel build release tag
 KRNL_REL_TAG="$KERNEL_VERSION"
@@ -175,7 +175,7 @@ make O=out clean && make O=out mrproper
 make "$DEFCONFIG" O=out
 
 echo -e "$yellow << compiling the kernel >> \n $white"
-tg_post_msg "Successful triggered Compiling kernel for sweet oss" "$CHATID"
+tg_post_msg "Successful triggered Compiling kernel for $DEVICE $CODENAME" "$CHATID"
 
 build_kernel || error=true
 
@@ -203,7 +203,7 @@ KERVER=$(make kernelversion)
                 cp -r "$dtbo" zip/
                 cp -r "$dtb" zip/
                 cd zip
-                export ZIP="$KERNEL_NAME"-"$KRNL_REL_TAG"-"$CODENAME"-"$DATE"
+                export ZIP="$KERNEL_NAME"-"$KRNL_REL_TAG"-"$CODENAME"
                 zip -r9 "$ZIP" * -x .git README.md LICENSE *placeholder
                 curl -sLo zipsigner-3.0.jar https://raw.githubusercontent.com/shashank1439/anykernel/zipper/zipsigner-3.0.jar
                 java -jar zipsigner-3.0.jar "$ZIP".zip "$ZIP"-signed.zip
