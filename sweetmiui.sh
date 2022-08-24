@@ -54,7 +54,7 @@ export CHATID API_BOT KERNEL_VERSION
 
 DEVICE="REDMI NOTE 10 PRO & PRO MAX"
 CODENAME="SWEET"
-KERNEL_NAME="SLEEPY_KERNEL-OSS"
+KERNEL_NAME="SLEEPY_KERNEL-MIUI"
 
 # Kernel build release tag
 KRNL_REL_TAG="$KERNEL_VERSION"
@@ -159,8 +159,8 @@ export IMG="$MY_DIR"/out/arch/arm64/boot/Image.gz-dtb
 export dtbo="$MY_DIR"/out/arch/arm64/boot/dtbo.img
 export dtb="$MY_DIR"/out/arch/arm64/boot/dtb.img
 
-# oss stuff
-git cherry-pick 32ade146e0621dc98751520cd2774406ca89f40b
+# Miui stuff
+git revert 32ade146e0621dc98751520cd2774406ca89f40b --no-edit
 
 # Let's start
 
@@ -178,7 +178,7 @@ make O=out clean && make O=out mrproper
 make "$DEFCONFIG" O=out
 
 echo -e "$yellow << compiling the kernel >> \n $white"
-tg_post_msg "Successful triggered Compiling kernel for $DEVICE $CODENAME" "$CHATID"
+tg_post_msg "Successful triggered Compiling kernel for $DEVICE $CODENAME MIUI" "$CHATID"
 
 build_kernel || error=true
 
