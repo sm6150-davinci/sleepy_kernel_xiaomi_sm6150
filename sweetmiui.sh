@@ -160,7 +160,7 @@ export dtbo="$MY_DIR"/out/arch/arm64/boot/dtbo.img
 export dtb="$MY_DIR"/out/arch/arm64/boot/dtb.img
 
 # Miui stuff
-git revert b9104e2c6e0024da8bd5a9986650113a72ff34f3 --no-edit
+git revert 83c8a465d9eb485fc683b7c80ca3a912ccd69fed --no-edit
 
 # Let's start
 

@@ -160,7 +160,7 @@ export dtbo="$MY_DIR"/out/arch/arm64/boot/dtbo.img
 export dtb="$MY_DIR"/out/arch/arm64/boot/dtb.img
 
 # oss stuff
-git cherry-pick b9104e2c6e0024da8bd5a9986650113a72ff34f3
+git cherry-pick 83c8a465d9eb485fc683b7c80ca3a912ccd69fed && git cherry-pick --skip
 
 # Let's start
 
