@@ -3260,9 +3260,6 @@ static inline int sched_boost(void)
 }
 
 extern bool sched_boost_top_app(void);
-{
-	return false;
-}
 
 static inline bool task_placement_boost_enabled(struct task_struct *p)
 {
@@ -3271,6 +3268,7 @@ static inline bool task_placement_boost_enabled(struct task_struct *p)
 
 	return false;
 }
+
 
 static inline enum sched_boost_policy task_boost_policy(struct task_struct *p)
 {
