@@ -50,14 +50,14 @@ if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
 #
 # TOOLCHAIN = the toolchain u want to use "gcc/clang"
 
-export CHATID API_BOT KERNEL_VERSION
+export CHATID API_BOT
 
 DEVICE="REDMI NOTE 10 PRO & PRO MAX"
 CODENAME="SWEET"
 KERNEL_NAME="SLEEPY_KERNEL-MIUI"
 
 # Kernel build release tag
-KRNL_REL_TAG="$KERNEL_VERSION"
+KRNL_REL_TAG="MISMARVEL"
 
 DEFCONFIG="sweet_defconfig"
 
