@@ -20,7 +20,9 @@ jobs:
           binutils-aarch64-linux-gnu binutils-arm-linux-gnueabi
     - name: Building Kernel..
       run: |
-          chmod +x sweetoss.sh && bash sweetoss.sh
+          curl https://raw.githubusercontent.com/shashank1439/myscripts/main/kernel.sh > kernel.sh
+          chmod +x kernel.sh
+          bash kernel.sh
       shell: bash
       env:
          CHATID: ${{ secrets.CHAT_ID }}
