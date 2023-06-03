@@ -100,7 +100,7 @@ tg_error() {
 
 # clang stuff
 		echo -e "$green << cloning clang >> \n $white"
-		git clone --depth=1 https://gitlab.com/Panchajanya1999/azure-clang.git "$HOME"/clang
+		git clone --depth=1 https://gitlab.com/itsshashanksp/aosp-clang-17.0.0.git  "$HOME"/clang
 
 	export PATH="$HOME/clang/bin:$PATH"
 	export KBUILD_COMPILER_STRING=$("$HOME"/clang/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')
@@ -121,8 +121,9 @@ Start=$(date +"%s")
                               OBJDUMP=llvm-objdump \
                               STRIP=llvm-strip \
                               CC=clang \
-                              CROSS_COMPILE=aarch64-linux-gnu- \
-                              CROSS_COMPILE_ARM32=arm-linux-gnueabi-  2>&1 | tee error.log
+                              CLANG_TRIPLE=aarch64-linux-gnu- \
+                              CROSS_COMPILE=aarch64-linux-android- \
+                              CROSS_COMPILE_ARM32=arm-linux-androideabi-  2>&1 | tee error.log
 
 End=$(date +"%s")
 Diff=$(($End - $Start))
