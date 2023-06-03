@@ -5,6 +5,7 @@ on:
 jobs:
   sleepybuild:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
 
     steps:
     - name: Creating Env!
