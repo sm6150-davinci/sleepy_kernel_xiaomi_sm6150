@@ -5184,6 +5184,18 @@ static ssize_t sysfs_fod_ui_read(struct device *dev,
 	return snprintf(buf, PAGE_SIZE, "%d\n", status);
 }
 
+static DEVICE_ATTR(doze_status, 0644,
+			sysfs_doze_status_read,
+			sysfs_doze_status_write);
+
+static DEVICE_ATTR(doze_mode, 0644,
+			sysfs_doze_mode_read,
+			sysfs_doze_mode_write);
+
+static DEVICE_ATTR(fod_ui, 0444,
+			sysfs_fod_ui_read,
+			NULL);
+
 static ssize_t sysfs_hbm_read(struct device *dev,
 		struct device_attribute *attr, char *buf)
 {
@@ -5246,18 +5258,6 @@ error:
 	mutex_unlock(&display->display_lock);
 	return ret == 0 ? count : ret;
 }
-
-static DEVICE_ATTR(doze_status, 0644,
-			sysfs_doze_status_read,
-			sysfs_doze_status_write);
-
-static DEVICE_ATTR(doze_mode, 0644,
-			sysfs_doze_mode_read,
-			sysfs_doze_mode_write);
-
-static DEVICE_ATTR(fod_ui, 0444,
-			sysfs_fod_ui_read,
-			NULL);
 
 static DEVICE_ATTR(hbm, 0644,
 			sysfs_hbm_read,
