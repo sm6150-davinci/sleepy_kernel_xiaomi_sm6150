@@ -30,13 +30,6 @@ rm -rf out
 rm -rf zip
 rm -rf error.log
 
-echo -e "$green << setup dirs >> \n $white"
-
-# With that setup , the script will set dirs and few important thinks
-
-MY_DIR="${BASH_SOURCE%/*}"
-if [[ ! -d "$MY_DIR" ]]; then MY_DIR="$PWD"; fi
-
 # Now u can chose which things need to be modified
 #
 # DEVICE = your device codename
@@ -151,9 +144,9 @@ build_kernel || error=true
 DATE=$(date +"%Y%m%d-%H%M%S")
 KERVER=$(make kernelversion)
 
-export IMG="$MY_DIR"/out/arch/arm64/boot/Image.gz-dtb
-export dtbo="$MY_DIR"/out/arch/arm64/boot/dtbo.img
-export dtb="$MY_DIR"/out/arch/arm64/boot/dtb.img
+export IMG="$PWD"/out/arch/arm64/boot/Image.gz-dtb
+export dtbo="$PWD"/out/arch/arm64/boot/dtbo.img
+export dtb="$PWD"/out/arch/arm64/boot/dtb.img
 
         if [ -f "$IMG" ]; then
                 echo -e "$green << Build completed in $(($Diff / 60)) minutes and $(($Diff % 60)) seconds >> \n $white"
