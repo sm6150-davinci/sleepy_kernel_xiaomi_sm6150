@@ -46,12 +46,21 @@ rm -rf error.log
 
 export CHATID API_BOT MIUI
 
-DEVICE="REDMI NOTE 10 PRO & PRO MAX"
+if [ "$MIUI" == yes  ];
+then
+DEVICE="REDMI NOTE 10 PRO & PRO MAX (MIUI)"
+KERNEL_NAME="SLEEPY_KERNEL-MIUI"
+CODENAME="SWEET"
+# revert commit
+git revert e848765874dc --no-edit
+else
+DEVICE="REDMI NOTE 10 PRO & PRO MAX (OSS)"
 KERNEL_NAME="SLEEPY_KERNEL-OSS"
 CODENAME="SWEET"
+fi
 
 # Kernel build release tag
-KRNL_REL_TAG="test"
+KRNL_REL_TAG="REBASE"
 
 DEFCONFIG="sweet_defconfig"
 
@@ -59,7 +68,7 @@ AnyKernel="https://github.com/shashank1439/AnyKernel3"
 AnyKernelbranch="master"
 
 HOSST="sleeping-bag"
-USEER="shashank"
+USEER="itsshashanksp"
 
 # setup telegram env
 export BOT_MSG_URL="https://api.telegram.org/bot$API_BOT/sendMessage"
