@@ -60,7 +60,7 @@ CODENAME="SWEET"
 fi
 
 # Kernel build release tag
-KRNL_REL_TAG="REBASE"
+KRNL_REL_TAG="$KERNEL_VERSION"
 
 DEFCONFIG="sweet_defconfig"
 
