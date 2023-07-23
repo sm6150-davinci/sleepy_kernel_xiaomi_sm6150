@@ -28,4 +28,5 @@ jobs:
       env:
          CHATID: ${{ secrets.CHAT_ID }}
          API_BOT: ${{ secrets.BOT_API }}
-         MIUI: ${{ secrets.FUCK_MIUI }}
+         MIUI: ${{ secrets.MIUI }}
+         VERSION: ${{ secrets.KERNEL_VERSION }}
