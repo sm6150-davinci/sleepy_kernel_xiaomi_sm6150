@@ -44,7 +44,7 @@ rm -rf error.log
 # USEER = build user
 #
 
-export CHATID API_BOT MIUI
+export CHATID API_BOT MIUI KERNEL_VERSION
 
 if [ "$MIUI" == yes  ];
 then
