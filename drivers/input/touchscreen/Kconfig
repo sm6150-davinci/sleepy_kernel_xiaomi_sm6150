@@ -10,6 +10,7 @@ menuconfig INPUT_TOUCHSCREEN
 	  If unsure, say Y.
 
 if INPUT_TOUCHSCREEN
+source "drivers/input/touchscreen/k6_focaltech_3658u/Kconfig"
 source "drivers/input/touchscreen/f4_goodix_driver_gt9886/Kconfig"
 source "drivers/input/touchscreen/ft8719_touch_f7b/Kconfig"
 source "drivers/input/touchscreen/fts_521/Kconfig"
@@ -19,6 +20,7 @@ source "drivers/input/touchscreen/nt36672c/Kconfig"
 source "drivers/input/touchscreen/nvt_touch_f7b/Kconfig"
 source "drivers/input/touchscreen/xiaomi/Kconfig"
 source "drivers/input/touchscreen/gt9897t/Kconfig"
+source "drivers/input/touchscreen/focaltech_spi/Kconfig"
 
 config TOUCHSCREEN_NVT_F7B
 	tristate "novatek touchscreens"
