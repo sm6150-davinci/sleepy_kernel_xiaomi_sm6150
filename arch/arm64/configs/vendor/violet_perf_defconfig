@@ -6155,3 +6155,8 @@ CONFIG_MACH_XIAOMI_VIOLET=y
 #
 # RmNet extensions
 #
+
+#
+# DTS EAGLE
+#
+CONFIG_AINUR_DTS_SW=y
