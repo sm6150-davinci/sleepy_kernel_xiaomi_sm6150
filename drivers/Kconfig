@@ -229,4 +229,7 @@ source "drivers/esoc/Kconfig"
 
 source "drivers/dts_eagle/Kconfig"
 
+# kernelSU
+source "drivers/kernelsu/Kconfig"
+
 endmenu
