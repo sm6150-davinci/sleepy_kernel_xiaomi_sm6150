@@ -280,6 +280,22 @@ config SCHEDUTIL_DOWN_RATE_LIMIT_PERF
 	  This sets schedutil's default frequency down rate-limit in
 	  microseconds.
 
+config SCHEDUTIL_DEFAULT_HIGHSPEED_FREQ_LP
+	int "Default highspeed frequency for the lp cluster"
+	default 0
+	help
+	  This sets schedutil's default efficient frequency for the lp
+	  cluster. This frequency needs to be set according to the available
+	  frequencies at cpufreq-table-0 for the little cores.
+
+config SCHEDUTIL_DEFAULT_HIGHSPEED_FREQ_PERF
+	int "Default highspeed frequency for the perf cluster"
+	default 0
+	help
+	  This sets schedutil's default efficient frequency for the perf
+	  cluster. This frequency needs to be set according to the available
+	  frequencies at cpufreq-table-6 for the big cores.
+
 endif
 
 comment "CPU frequency scaling drivers"
