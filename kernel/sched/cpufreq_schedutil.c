@@ -18,6 +18,7 @@
 #include <linux/slab.h>
 #include <trace/events/power.h>
 #include <linux/sched/sysctl.h>
+#include <linux/battery_saver.h>
 #include "sched.h"
 
 #define SUGOV_KTHREAD_PRIORITY	50
@@ -329,7 +330,7 @@ static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
 {
 	struct sugov_policy *sg_policy = sg_cpu->sg_policy;
 
-	if (!sg_policy->tunables->iowait_boost_enable)
+	if (!sg_policy->tunables->iowait_boost_enable || is_battery_saver_on())
 		return;
 
 	/* Clear iowait_boost if the CPU apprears to have been idle. */
@@ -432,7 +433,7 @@ static void sugov_walt_adjust(struct sugov_cpu *sg_cpu, unsigned long *util,
 		*util = *max;
 
 	if (sg_policy->tunables->pl && pl > *util) {
-		if (conservative_pl())
+		if (conservative_pl() || is_battery_saver_on())
 			pl = mult_frac(pl, TARGET_LOAD, 100);
 		*util = (*util + pl) / 2;
 	}
@@ -857,7 +858,8 @@ static ssize_t iowait_boost_enable_show(struct gov_attr_set *attr_set,
 {
 	struct sugov_tunables *tunables = to_sugov_tunables(attr_set);
 
-	return sprintf(buf, "%u\n", tunables->iowait_boost_enable);
+	return sprintf(buf, "%u\n", is_battery_saver_on() ?
+				0 : tunables->iowait_boost_enable);
 }
 
 static ssize_t iowait_boost_enable_store(struct gov_attr_set *attr_set,
