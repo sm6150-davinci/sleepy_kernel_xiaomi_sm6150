@@ -189,17 +189,20 @@ __read_mostly unsigned int sysctl_sched_freq_reporting_policy;
 
 static int __init set_sched_ravg_window(char *str)
 {
+	unsigned int adj_window;
 	unsigned int window_size;
 
 	get_option(&str, &window_size);
 
-	if (window_size < DEFAULT_SCHED_RAVG_WINDOW ||
-			window_size > MAX_SCHED_RAVG_WINDOW) {
-		WARN_ON(1);
-		return -EINVAL;
-	}
+	/* Adjust for CONFIG_HZ */
+	adj_window = (window_size / TICK_NSEC) * TICK_NSEC;
 
-	sched_ravg_window = window_size;
+	/* Warn if we're a bit too far away from the expected window size */
+	WARN(adj_window < window_size - NSEC_PER_MSEC,
+	     "tick-adjusted window size %u, original was %u\n", adj_window,
+	     window_size);
+
+	sched_ravg_window = adj_window;
 	return 0;
 }
 
