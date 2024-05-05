@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       DEPLOY_DEVICE_TYPE:
-        description: 'Deploy Device Type (COURBET/DAVINCI/PHOENIX/SWEET)'
+        description: 'Deploy Device Type (COURBET/DAVINCI/PHOENIX/SWEET/SWEETK6A)'
         required: true
       DEPLOY_TAG_TYPE:
         description: 'Deploy Kernel version tag (example: v1 or v2)'
