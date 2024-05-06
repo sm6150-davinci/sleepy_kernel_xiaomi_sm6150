@@ -41,6 +41,10 @@
 *.xz
 Module.symvers
 modules.builtin
+kernel.sh
+error.log
+out
+zip
 
 #
 # Top-level generic files
