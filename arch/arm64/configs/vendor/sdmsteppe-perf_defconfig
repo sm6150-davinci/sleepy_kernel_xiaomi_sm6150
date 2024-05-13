@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 4.14.343-openela Kernel Configuration
+# Linux/arm64 4.14.344-openela Kernel Configuration
 #
 CONFIG_ARM64=y
 CONFIG_64BIT=y
@@ -2059,6 +2059,7 @@ CONFIG_TOUCHSCREEN_PROPERTIES=y
 # CONFIG_TOUCHSCREEN_FTS_CAF is not set
 CONFIG_INPUT_MISC=y
 # CONFIG_INPUT_AW8624_HAPTIC is not set
+# CONFIG_INPUT_DRV2624_HAPTIC is not set
 # CONFIG_INPUT_AD714X is not set
 # CONFIG_INPUT_ATMEL_CAPTOUCH is not set
 # CONFIG_INPUT_BMA150 is not set
