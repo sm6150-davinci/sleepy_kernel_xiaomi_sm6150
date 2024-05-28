@@ -564,7 +564,7 @@ void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
 	struct kioctx *ctx = req->ki_ctx;
 	unsigned long flags;
 
-	if (WARN_ON_ONCE(!list_empty(&req->ki_list)))
+        if (WARN_ON_ONCE(!list_empty(&req->ki_list)))
 		return;
 
 	spin_lock_irqsave(&ctx->ctx_lock, flags);
