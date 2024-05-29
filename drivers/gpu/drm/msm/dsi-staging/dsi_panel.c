@@ -24,10 +24,6 @@
 #include "dsi_ctrl_hw.h"
 #include "dsi_parser.h"
 
-#ifdef CONFIG_TOUCHSCREEN_TDDI_DBCLK
-#include <linux/double_click.h>
-#endif
-
 #ifdef CONFIG_EXPOSURE_ADJUSTMENT
 #include "exposure_adjustment.h"
 #endif
@@ -448,17 +444,11 @@ static int dsi_panel_set_pinctrl_state(struct dsi_panel *panel, bool enable)
 static int dsi_panel_power_on(struct dsi_panel *panel)
 {
 	int rc = 0;
-	bool skip_enable_regulator = false;
 
-#ifdef CONFIG_TOUCHSCREEN_TDDI_DBCLK
-	skip_enable_regulator = panel->is_tddi_flag && is_tp_doubleclick_enable();
-#endif
-	if (!skip_enable_regulator) {
-		rc = dsi_pwr_enable_regulator(&panel->power_info, true);
-		if (rc) {
-			pr_err("[%s] failed to enable vregs, rc=%d\n", panel->name, rc);
-			goto exit;
-		}
+	rc = dsi_pwr_enable_regulator(&panel->power_info, true);
+	if (rc) {
+		pr_err("[%s] failed to enable vregs, rc=%d\n", panel->name, rc);
+		goto exit;
 	}
 
 	rc = dsi_panel_set_pinctrl_state(panel, true);
@@ -501,15 +491,13 @@ extern bool enable_gesture_mode;
 static int dsi_panel_power_off(struct dsi_panel *panel)
 {
 	int rc = 0;
-	bool skip_reset_gpio, skip_disable_regulator = false;
+	bool skip_reset_gpio = false;
 
 	if (gpio_is_valid(panel->reset_config.disp_en_gpio))
 		gpio_set_value(panel->reset_config.disp_en_gpio, 0);
 
 #ifdef CONFIG_MACH_XIAOMI_VIOLET
 	skip_reset_gpio = enable_gesture_mode;
-#elif defined CONFIG_TOUCHSCREEN_TDDI_DBCLK
-	skip_reset_gpio = panel->is_tddi_flag && is_tp_doubleclick_enable();
 #endif
 	if (!skip_reset_gpio && gpio_is_valid(panel->reset_config.reset_gpio))
 		gpio_set_value(panel->reset_config.reset_gpio, 0);
@@ -523,14 +511,9 @@ static int dsi_panel_power_off(struct dsi_panel *panel)
 		       rc);
 	}
 
-#ifdef CONFIG_TOUCHSCREEN_TDDI_DBCLK
-	skip_disable_regulator = panel->is_tddi_flag && is_tp_doubleclick_enable();
-#endif
-	if (!skip_disable_regulator) {
-		rc = dsi_pwr_enable_regulator(&panel->power_info, false);
-		if (rc)
-			pr_err("[%s] failed to enable vregs, rc=%d\n", panel->name, rc);
-	}
+	rc = dsi_pwr_enable_regulator(&panel->power_info, false);
+	if (rc)
+		pr_err("[%s] failed to enable vregs, rc=%d\n", panel->name, rc);
 
 	return rc;
 }
@@ -2270,12 +2253,6 @@ static int dsi_panel_parse_misc_features(struct dsi_panel *panel)
 
 	panel->lp11_init = utils->read_bool(utils->data,
 			"qcom,mdss-dsi-lp11-init");
-
-#ifdef CONFIG_TOUCHSCREEN_TDDI_DBCLK
-	panel->is_tddi_flag = utils->read_bool(utils->data,
-			"qcom,is-tddi-flag");
-#endif
-
 	return 0;
 }
 
